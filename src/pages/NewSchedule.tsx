@@ -7,7 +7,7 @@ import { Save, Download, SlidersHorizontal, ChevronDown, Target, MapPin } from '
 import { exportScheduleToPDF } from '../utils/pdfGenerator';
 
 export const NewSchedule = () => {
-  const { institutions, globalLogo } = useStore();
+  const { institutions, globalLogo, addSchedule } = useStore();
 
   const [selectedInstId, setSelectedInstId] = useState<string>(institutions[0]?.id || '');
   const selectedInstitution = useMemo(() => institutions.find(i => i.id === selectedInstId), [institutions, selectedInstId]);
@@ -36,71 +36,91 @@ export const NewSchedule = () => {
       globalTarget,
       globalLogo: globalLogo || undefined,
     });
+    
+    // PDF başarıyla oluşturulunca, sisteme (Dashboard için) kaydet
+    addSchedule({
+      id: crypto.randomUUID(),
+      institutionId: selectedInstitution.id,
+      date: new Date().toISOString().split('T')[0],
+      createdAt: new Date().toISOString(),
+      rows: rows,
+      globalTarget: globalTarget,
+      config: config
+    });
+
     setIsPdfLoading(false);
   };
 
+  const handleSaveDraft = () => {
+    if (!selectedInstitution) { alert('Lütfen önce bir kurum seçin.'); return; }
+    addSchedule({
+      id: crypto.randomUUID(),
+      institutionId: selectedInstitution.id,
+      date: new Date().toISOString().split('T')[0],
+      createdAt: new Date().toISOString(),
+      rows: rows,
+      globalTarget: globalTarget,
+      config: config
+    });
+    alert('Planlama sisteme kaydedildi!');
+  };
+
   return (
-    <div style={{ padding: '32px', maxWidth: '1200px', margin: '0 auto' }}>
+    <div className="p-4 md:p-8 max-w-[1200px] mx-auto">
 
       {/* Page Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '28px', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="flex flex-col md:flex-row justify-between items-start mb-6 md:mb-7 flex-wrap gap-4 md:gap-4">
         <div>
-          <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.875rem', fontWeight: 700, color: '#111C4E', marginBottom: '4px' }}>
+          <h1 className="font-display text-[1.5rem] md:text-[1.875rem] font-bold text-[#111C4E] mb-1">
             Kayıt Planı
           </h1>
-          <p style={{ color: '#9CA3AF', fontSize: '0.875rem' }}>Genel planlama oluşturun ve PDF olarak kaydedin.</p>
+          <p className="text-[#9CA3AF] text-xs md:text-sm">Genel planlama oluşturun ve PDF olarak kaydedin.</p>
         </div>
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-          <button onClick={() => alert('Taslak kaydedildi! (Faz 2)')} className="btn-secondary">
+        <div className="flex w-full md:w-auto gap-2 md:gap-3 items-center">
+          <button onClick={handleSaveDraft} className="btn-secondary flex-1 md:flex-none justify-center">
             <Save size={15} />
-            Taslak Kaydet
+            <span className="whitespace-nowrap">Taslak Kaydet</span>
           </button>
           <button
             onClick={handleDownloadPDF}
-            className="btn-primary"
+            className="btn-primary flex-1 md:flex-none justify-center"
             disabled={isPdfLoading}
             style={{ opacity: isPdfLoading ? 0.7 : 1, cursor: isPdfLoading ? 'wait' : 'pointer' }}
           >
             <Download size={15} />
-            {isPdfLoading ? 'Hazırlanıyor…' : 'PDF İndir'}
+            <span className="whitespace-nowrap">{isPdfLoading ? 'Hazırlanıyor…' : 'PDF İndir'}</span>
           </button>
         </div>
       </div>
 
       {/* Control Strip */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr auto',
-        gap: '12px',
-        marginBottom: '16px',
-        alignItems: 'end',
-      }}>
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-3 md:gap-4 mb-4 items-end">
         {/* Kurum */}
         <div>
           <label className="field-label">
-            <MapPin size={10} style={{ display: 'inline', marginRight: '4px' }} />
+            <MapPin size={10} className="inline mr-1" />
             Kurum
           </label>
-          <div style={{ position: 'relative' }}>
+          <div className="relative">
             <select
               value={selectedInstId}
               onChange={(e) => setSelectedInstId(e.target.value)}
-              className="input"
-              style={{ appearance: 'none', paddingRight: '36px' }}
+              className="input pr-9"
+              style={{ appearance: 'none' }}
             >
               <option value="" disabled>Kurum seçin…</option>
               {institutions.map(inst => (
                 <option key={inst.id} value={inst.id}>{inst.name}</option>
               ))}
             </select>
-            <ChevronDown size={14} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9CA3AF', pointerEvents: 'none' }} />
+            <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
           </div>
         </div>
 
         {/* Hedef */}
         <div>
           <label className="field-label">
-            <Target size={10} style={{ display: 'inline', marginRight: '4px' }} />
+            <Target size={10} className="inline mr-1" />
             Genel Hedef
           </label>
           <input
@@ -115,48 +135,23 @@ export const NewSchedule = () => {
         {/* Zaman Ayarları butonu */}
         <button
           onClick={() => setShowConfig(!showConfig)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '10px 16px',
-            borderRadius: '12px',
-            border: showConfig ? '1px solid rgba(183,110,121,0.4)' : '1px solid rgba(27,42,107,0.12)',
-            background: showConfig ? 'rgba(183,110,121,0.08)' : 'rgba(255,255,255,0.8)',
-            cursor: 'pointer',
-            fontSize: '0.82rem',
-            fontWeight: 600,
-            color: showConfig ? '#B76E79' : '#6B7280',
-            transition: 'all 0.2s ease',
-            whiteSpace: 'nowrap',
-            height: '42px',
-          }}
+          className={`flex items-center justify-center gap-2 px-4 rounded-xl font-semibold text-[0.82rem] transition-all duration-200 h-[42px] w-full md:w-auto ${
+            showConfig 
+              ? 'border border-[#B76E79]/40 bg-[#B76E79]/10 text-[#B76E79]' 
+              : 'border border-[#1B2A6B]/10 bg-white/80 text-gray-500 hover:bg-white'
+          }`}
         >
           <SlidersHorizontal size={15} />
           <span>Zaman</span>
-          <span style={{
-            background: showConfig ? 'rgba(183,110,121,0.15)' : 'rgba(27,42,107,0.08)',
-            color: showConfig ? '#B76E79' : '#1B2A6B',
-            padding: '2px 8px',
-            borderRadius: '6px',
-            fontSize: '0.7rem',
-            fontWeight: 700,
-          }}>{config.intervalMinutes}dk</span>
+          <span className={`px-2 py-0.5 rounded-md text-[0.7rem] font-bold ${
+            showConfig ? 'bg-[#B76E79]/15 text-[#B76E79]' : 'bg-[#1B2A6B]/5 text-[#1B2A6B]'
+          }`}>{config.intervalMinutes}dk</span>
         </button>
       </div>
 
       {/* Zaman Ayarları Panel */}
       {showConfig && (
-        <div style={{
-          background: 'linear-gradient(135deg, rgba(183,110,121,0.06) 0%, rgba(27,42,107,0.04) 100%)',
-          border: '1px solid rgba(183,110,121,0.2)',
-          borderRadius: '14px',
-          padding: '20px',
-          marginBottom: '20px',
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr 1fr',
-          gap: '16px',
-        }}>
+        <div className="bg-gradient-to-br from-[#B76E79]/5 to-[#1B2A6B]/5 border border-[#B76E79]/20 rounded-[14px] p-4 md:p-5 mb-5 grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
           <div>
             <label className="field-label">Başlangıç Saati</label>
             <input type="time" value={config.startTime} onChange={(e) => setConfig({ ...config, startTime: e.target.value })} className="input" />
@@ -188,12 +183,12 @@ export const NewSchedule = () => {
 
       {/* Row count badge */}
       {selectedInstId && rows.length > 0 && (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-          <span style={{ fontSize: '0.78rem', color: '#9CA3AF' }}>
-            <strong style={{ color: '#1B2A6B' }}>{rows.length}</strong> zaman dilimi
+        <div className="flex items-center justify-between mb-3 px-1 md:px-0">
+          <span className="text-[0.75rem] md:text-[0.78rem] text-[#9CA3AF]">
+            <strong className="text-[#1B2A6B]">{rows.length}</strong> zaman dilimi
           </span>
           {globalTarget && (
-            <span style={{ fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '4px', color: '#B76E79', background: 'rgba(183,110,121,0.08)', padding: '3px 10px', borderRadius: '20px' }}>
+            <span className="text-[0.75rem] md:text-[0.78rem] flex items-center gap-1 text-[#B76E79] bg-[#B76E79]/10 px-2.5 py-1 rounded-full">
               <Target size={11} />
               {globalTarget}
             </span>
@@ -203,22 +198,16 @@ export const NewSchedule = () => {
 
       {/* Table */}
       {selectedInstId ? (
-        <div id="schedule-table-container" style={{ background: 'white', borderRadius: '16px' }}>
+        <div id="schedule-table-container" className="bg-white rounded-2xl shadow-sm border border-[#1B2A6B]/5">
           <ScheduleTable timeSlots={timeSlots} rows={rows} onRowsChange={setRows} />
         </div>
       ) : (
-        <div style={{
-          padding: '64px 24px',
-          textAlign: 'center',
-          background: 'rgba(255,255,255,0.6)',
-          borderRadius: '16px',
-          border: '2px dashed rgba(27,42,107,0.12)',
-        }}>
-          <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: 'rgba(27,42,107,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-            <MapPin size={24} color="#1B2A6B" opacity={0.4} />
+        <div className="py-12 md:py-16 px-6 text-center bg-white/60 rounded-2xl border-2 border-dashed border-[#1B2A6B]/10">
+          <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-[#1B2A6B]/5 flex items-center justify-center mx-auto mb-3 md:mb-4">
+            <MapPin size={24} className="text-[#1B2A6B] opacity-40" />
           </div>
-          <p style={{ fontSize: '0.9rem', color: '#9CA3AF', fontWeight: 500 }}>Planlama oluşturmak için bir kurum seçin</p>
-          <p style={{ fontSize: '0.8rem', color: '#C4C9D4', marginTop: '4px' }}>Kurumlar sayfasından yeni kurum ekleyebilirsiniz</p>
+          <p className="text-[0.85rem] md:text-[0.9rem] text-[#9CA3AF] font-medium">Planlama oluşturmak için bir kurum seçin</p>
+          <p className="text-[0.75rem] md:text-[0.8rem] text-[#C4C9D4] mt-1">Kurumlar sayfasından yeni kurum ekleyebilirsiniz</p>
         </div>
       )}
     </div>

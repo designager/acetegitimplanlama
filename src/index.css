@@ -191,6 +191,28 @@
     background: white;
     box-shadow: 0 0 0 2px rgba(183, 110, 121, 0.25);
   }
+
+  /* ── Mobile Overrides ── */
+  @media (max-width: 768px) {
+    .schedule-table thead th {
+      padding: 12px 14px;
+      font-size: 0.75rem;
+    }
+    .schedule-time-cell {
+      padding: 12px 14px;
+      font-size: 0.8rem;
+    }
+    .schedule-table-cell {
+      padding: 6px 10px;
+    }
+    .schedule-input {
+      padding: 8px 10px;
+      font-size: 0.8rem;
+    }
+    .card {
+      padding: 16px;
+    }
+  }
 }
 
 @layer utilities {
