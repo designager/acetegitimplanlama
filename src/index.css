@@ -1,0 +1,231 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@600;700&display=swap');
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    @apply antialiased font-body;
+    background: #F0EDE8;
+    color: #1A1A2E;
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  /* ── Buttons ── */
+  .btn-primary {
+    @apply relative inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium text-sm text-white;
+    background: linear-gradient(135deg, #1B2A6B 0%, #2E3F8F 100%);
+    box-shadow: 0 4px 15px rgba(27, 42, 107, 0.35), 0 1px 3px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 25px rgba(27, 42, 107, 0.45), 0 2px 6px rgba(0,0,0,0.1);
+  }
+  .btn-primary:active {
+    transform: translateY(0px) scale(0.98);
+  }
+
+  .btn-secondary {
+    @apply relative inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium text-sm;
+    background: rgba(183, 110, 121, 0.08);
+    color: #B76E79;
+    border: 1px solid rgba(183, 110, 121, 0.2);
+    transition: all 0.2s ease;
+  }
+  .btn-secondary:hover {
+    background: rgba(183, 110, 121, 0.15);
+    border-color: rgba(183, 110, 121, 0.4);
+    transform: translateY(-1px);
+  }
+  .btn-secondary:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm text-text-muted;
+    transition: all 0.15s ease;
+  }
+  .btn-ghost:hover {
+    background: rgba(27, 42, 107, 0.06);
+    color: #1B2A6B;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 24px rgba(27, 42, 107, 0.06), 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  .card-glass {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(27, 42, 107, 0.08), inset 0 1px 0 rgba(255,255,255,0.9);
+  }
+
+  /* ── Inputs ── */
+  .input {
+    @apply w-full px-4 py-2.5 rounded-xl text-sm font-medium;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(27, 42, 107, 0.12);
+    color: #1A1A2E;
+    transition: all 0.2s ease;
+    outline: none;
+  }
+  .input::placeholder {
+    color: #9CA3AF;
+    font-weight: 400;
+  }
+  .input:focus {
+    border-color: #B76E79;
+    box-shadow: 0 0 0 3px rgba(183, 110, 121, 0.12);
+    background: white;
+  }
+
+  /* ── Labels ── */
+  .field-label {
+    @apply block text-xs font-semibold uppercase tracking-wider mb-1.5;
+    color: #6B7280;
+    letter-spacing: 0.06em;
+  }
+
+  /* ── Badge ── */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold;
+    background: rgba(183, 110, 121, 0.12);
+    color: #B76E79;
+  }
+
+  /* ── Page Header ── */
+  .page-header {
+    @apply mb-8;
+  }
+  .page-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #111C4E;
+    line-height: 1.2;
+    margin-bottom: 0.25rem;
+  }
+  .page-header p {
+    color: #6B7280;
+    font-size: 0.9rem;
+  }
+
+  /* ── Table ── */
+  .schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 640px;
+  }
+  .schedule-table thead tr {
+    background: linear-gradient(135deg, #1B2A6B 0%, #2E3F8F 100%);
+  }
+  .schedule-table thead th {
+    padding: 16px 20px;
+    text-align: left;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #ffffff;
+    line-height: 1.4;
+    vertical-align: middle;
+  }
+  .schedule-table thead th:first-child {
+    border-radius: 12px 0 0 0;
+  }
+  .schedule-table thead th:last-child {
+    border-radius: 0 12px 0 0;
+  }
+  .schedule-table tbody tr {
+    border-bottom: 1px solid rgba(27, 42, 107, 0.06);
+    transition: background 0.15s ease;
+  }
+  .schedule-table tbody tr:hover {
+    background: rgba(183, 110, 121, 0.04);
+  }
+  .schedule-table tbody tr:last-child {
+    border-bottom: none;
+  }
+  .schedule-table-cell {
+    padding: 8px 12px;
+    vertical-align: middle;
+  }
+  .schedule-time-cell {
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: #6B7280;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  .schedule-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 10px 12px;
+    font-size: 0.875rem;
+    color: #1A1A2E;
+    border-radius: 8px;
+    transition: background 0.15s ease, box-shadow 0.15s ease;
+    font-family: 'Inter', sans-serif;
+  }
+  .schedule-input::placeholder {
+    color: #D1D5DB;
+  }
+  .schedule-input:focus {
+    background: white;
+    box-shadow: 0 0 0 2px rgba(183, 110, 121, 0.25);
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg, #1B2A6B 0%, #B76E79 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(183, 110, 121, 0.3) transparent;
+  }
+}
+
+/* PDF Export Mode Overrides */
+body.pdf-mode .schedule-input {
+  color: #000000 !important;
+  font-weight: 500 !important;
+  padding: 8px 12px !important;
+  background: transparent !important;
+}
+body.pdf-mode .schedule-input::placeholder {
+  color: transparent !important;
+}
+
+body.pdf-mode #schedule-table-container,
+body.pdf-mode #schedule-table-container > div {
+  overflow: visible !important;
+  width: 100% !important;
+  max-width: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+body.pdf-mode .schedule-table {
+  width: 100% !important;
+}
