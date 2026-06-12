@@ -4,7 +4,6 @@ import { ScheduleTable } from '../components/ScheduleTable';
 import { generateTimeSlots } from '../utils/timeHelpers';
 import type { ScheduleConfig, ScheduleRow } from '../types';
 import { Save, Download, SlidersHorizontal, ChevronDown, Target, MapPin } from 'lucide-react';
-import { exportScheduleToPDF } from '../utils/pdfGenerator';
 
 export const NewSchedule = () => {
   const { institutions, globalLogo, addSchedule } = useStore();
@@ -29,7 +28,10 @@ export const NewSchedule = () => {
   const handleDownloadPDF = async () => {
     if (!selectedInstitution) { alert('Lütfen bir kurum seçin.'); return; }
     setIsPdfLoading(true);
-    await exportScheduleToPDF({
+    
+    try {
+      const { exportScheduleToPDF } = await import('../utils/pdfGenerator');
+      await exportScheduleToPDF({
       tableElementId: 'schedule-table-container',
       institutionName: selectedInstitution.name,
       institutionLogo: selectedInstitution.logoBase64,
@@ -46,9 +48,13 @@ export const NewSchedule = () => {
       rows: rows,
       globalTarget: globalTarget,
       config: config
-    });
-
-    setIsPdfLoading(false);
+      });
+    } catch (error) {
+      console.error('PDF Export Error:', error);
+      alert('PDF oluşturulurken bir hata meydana geldi.');
+    } finally {
+      setIsPdfLoading(false);
+    }
   };
 
   const handleSaveDraft = () => {
