@@ -66,7 +66,11 @@ const NavLink = ({ to, icon: Icon, label }: { to: string; icon: React.ElementTyp
 };
 
 function AppContent() {
-  const { siteTitle, siteFavicon } = useStore();
+  const { siteTitle, siteFavicon, fetchInitialData, isLoading } = useStore();
+
+  useEffect(() => {
+    fetchInitialData();
+  }, []);
 
   useEffect(() => {
     document.title = siteTitle || 'Kayıt Planı';
@@ -80,6 +84,14 @@ function AppContent() {
       link.href = siteFavicon;
     }
   }, [siteTitle, siteFavicon]);
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-[#EDEAE4]">
+        <div className="w-12 h-12 border-4 border-[#B76E79]/20 border-t-[#B76E79] rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col md:flex-row h-screen bg-[#EDEAE4] overflow-hidden">
