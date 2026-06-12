@@ -36,25 +36,32 @@ export const useStore = create<AppState>((set) => ({
   fetchInitialData: async () => {
     set({ isLoading: true });
     
-    // Fetch institutions
-    const { data: instData } = await supabase.from('institutions').select('*');
-    if (instData) set({ institutions: instData });
+    try {
+      // Fetch institutions
+      const { data: instData, error: instError } = await supabase.from('institutions').select('*');
+      if (instError) console.error('Institution fetch error:', instError);
+      else if (instData) set({ institutions: instData });
 
-    // Fetch schedules
-    const { data: schData } = await supabase.from('schedules').select('*');
-    if (schData) set({ schedules: schData });
+      // Fetch schedules
+      const { data: schData, error: schError } = await supabase.from('schedules').select('*');
+      if (schError) console.error('Schedules fetch error:', schError);
+      else if (schData) set({ schedules: schData });
 
-    // Fetch settings
-    const { data: setData } = await supabase.from('settings').select('*').eq('id', 1).single();
-    if (setData) {
-      set({
-        globalLogo: setData.globalLogo,
-        siteTitle: setData.siteTitle || 'Kayıt Planı',
-        siteFavicon: setData.siteFavicon
-      });
+      // Fetch settings
+      const { data: setData, error: setError } = await supabase.from('settings').select('*').eq('id', 1).maybeSingle();
+      if (setError) console.error('Settings fetch error:', setError);
+      else if (setData) {
+        set({
+          globalLogo: setData.globalLogo,
+          siteTitle: setData.siteTitle || 'Kayıt Planı',
+          siteFavicon: setData.siteFavicon
+        });
+      }
+    } catch (error) {
+      console.error('Beklenmeyen bir hata oluştu:', error);
+    } finally {
+      set({ isLoading: false });
     }
-    
-    set({ isLoading: false });
   },
 
   setGlobalLogo: async (logo) => {
