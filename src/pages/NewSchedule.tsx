@@ -196,20 +196,20 @@ export const NewSchedule = () => {
           className={`flex items-center justify-center gap-2 px-4 rounded-xl font-semibold text-[0.82rem] transition-all duration-200 h-[42px] w-full md:w-auto ${
             showConfig 
               ? 'border border-[#B76E79]/40 bg-[#B76E79]/10 text-[#B76E79]' 
-              : 'border border-[#1B2A6B]/10 bg-white/80 text-gray-500 hover:bg-white'
+              : 'border border-white/10 bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
           }`}
         >
           <SlidersHorizontal size={15} />
           <span>Zaman</span>
           <span className={`px-2 py-0.5 rounded-md text-[0.7rem] font-bold ${
-            showConfig ? 'bg-[#B76E79]/15 text-[#B76E79]' : 'bg-[#1B2A6B]/5 text-[#1B2A6B]'
+            showConfig ? 'bg-[#B76E79]/15 text-[#B76E79]' : 'bg-white/10 text-gray-400'
           }`}>{config.intervalMinutes}dk</span>
         </button>
       </div>
 
       {/* Zaman Ayarları Panel */}
       {showConfig && (
-        <div className="bg-gradient-to-br from-[#B76E79]/5 to-[#1B2A6B]/5 border border-[#B76E79]/20 rounded-[14px] p-4 md:p-5 mb-5 grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+        <div className="bg-gradient-to-br from-[#B76E79]/10 to-white/5 border border-[#B76E79]/20 rounded-[14px] p-4 md:p-5 mb-5 grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
           <div>
             <label className="field-label">Başlangıç Saati</label>
             <input type="time" value={config.startTime} onChange={(e) => setConfig({ ...config, startTime: e.target.value })} className="input" />
@@ -243,7 +243,7 @@ export const NewSchedule = () => {
       {selectedInstId && rows.length > 0 && (
         <div className="flex items-center justify-between mb-3 px-1 md:px-0">
           <span className="text-[0.75rem] md:text-[0.78rem] text-[#9CA3AF]">
-            <strong className="text-[#1B2A6B]">{rows.length}</strong> zaman dilimi
+            <strong className="text-[#F2E0E2]">{rows.length}</strong> zaman dilimi
           </span>
           {globalTarget && (
             <span className="text-[0.75rem] md:text-[0.78rem] flex items-center gap-1 text-[#B76E79] bg-[#B76E79]/10 px-2.5 py-1 rounded-full">
@@ -256,16 +256,16 @@ export const NewSchedule = () => {
 
       {/* Table */}
       {selectedInstId ? (
-        <div id="schedule-table-container" className="bg-white rounded-2xl shadow-sm border border-[#1B2A6B]/5">
+        <div id="schedule-table-container" className="bg-white rounded-2xl shadow-sm border border-black/5 overflow-hidden">
           <ScheduleTable timeSlots={timeSlots} rows={rows} onRowsChange={setRows} />
         </div>
       ) : (
-        <div className="py-12 md:py-16 px-6 text-center bg-white/60 rounded-2xl border-2 border-dashed border-[#1B2A6B]/10">
-          <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-[#1B2A6B]/5 flex items-center justify-center mx-auto mb-3 md:mb-4">
-            <MapPin size={24} className="text-[#1B2A6B] opacity-40" />
+        <div className="py-12 md:py-16 px-6 text-center bg-white/5 rounded-2xl border-2 border-dashed border-white/10">
+          <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-[#B76E79]/10 flex items-center justify-center mx-auto mb-3 md:mb-4">
+            <MapPin size={24} className="text-[#B76E79] opacity-60" />
           </div>
           <p className="text-[0.85rem] md:text-[0.9rem] text-[#9CA3AF] font-medium">Planlama oluşturmak için bir kurum seçin</p>
-          <p className="text-[0.75rem] md:text-[0.8rem] text-[#C4C9D4] mt-1">Kurumlar sayfasından yeni kurum ekleyebilirsiniz</p>
+          <p className="text-[0.75rem] md:text-[0.8rem] text-gray-600 mt-1">Kurumlar sayfasından yeni kurum ekleyebilirsiniz</p>
         </div>
       )}
     </div>

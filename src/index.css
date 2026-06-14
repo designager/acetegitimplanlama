@@ -194,26 +194,66 @@
 
   /* ── Mobile Overrides ── */
   @media (max-width: 768px) {
+    /* Schedule table */
     .schedule-table thead th {
-      padding: 12px 14px;
-      font-size: 0.75rem;
+      padding: 10px 10px;
+      font-size: 0.72rem;
     }
     .schedule-time-cell {
-      padding: 12px 14px;
-      font-size: 0.8rem;
+      padding: 10px 10px;
+      font-size: 0.78rem;
+      min-width: 80px;
     }
     .schedule-table-cell {
-      padding: 6px 10px;
+      padding: 4px 6px;
     }
     .schedule-input {
-      padding: 8px 10px;
+      padding: 7px 8px;
       font-size: 0.8rem;
     }
     .card {
-      padding: 16px;
+      padding: 14px;
+      border-radius: 12px;
+    }
+    .card-glass {
+      border-radius: 14px;
+    }
+    /* Page headers */
+    .page-header h1 {
+      font-size: 1.5rem;
+    }
+    /* Buttons */
+    .btn-primary,
+    .btn-secondary {
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      border-radius: 10px;
+    }
+    /* Inputs */
+    .input {
+      padding: 10px 14px;
+      font-size: 0.875rem;
+    }
+  }
+
+  /* Extra small screens */
+  @media (max-width: 480px) {
+    .schedule-time-cell {
+      font-size: 0.72rem;
+      padding: 8px 8px;
+      min-width: 70px;
+    }
+    .schedule-table thead th {
+      padding: 8px 8px;
+      font-size: 0.68rem;
+    }
+    .schedule-input {
+      font-size: 0.75rem;
+      padding: 6px 6px;
     }
   }
 }
+
 
 @layer utilities {
   .text-gradient {
