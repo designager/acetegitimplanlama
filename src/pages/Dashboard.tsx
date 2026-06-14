@@ -4,8 +4,9 @@ import { useStore } from '../store/useStore';
 import { Link } from 'react-router-dom';
 
 export default function Dashboard() {
-  const { institutions, schedules, deleteSchedule } = useStore();
+  const { institutions, schedules, deleteSchedule, globalLogo } = useStore();
   const [activeInstitutionId, setActiveInstitutionId] = useState<string>('all');
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
   const getInstitutionName = (id: string) => {
     return institutions.find(i => i.id === id)?.name || 'Bilinmeyen Kurum';
@@ -14,6 +15,30 @@ export default function Dashboard() {
   const handleDelete = (id: string) => {
     if (window.confirm('Bu planlamayı silmek istediğinize emin misiniz?')) {
       deleteSchedule(id);
+    }
+  };
+
+  const handleDirectDownload = async (scheduleId: string) => {
+    const schedule = schedules.find(s => s.id === scheduleId);
+    if (!schedule) return;
+    const institution = institutions.find(i => i.id === schedule.institutionId);
+    if (!institution) return;
+
+    setDownloadingId(scheduleId);
+    try {
+      const { exportScheduleFromData } = await import('../utils/pdfGenerator');
+      await exportScheduleFromData({
+        institutionName: institution.name,
+        institutionLogo: institution.logoBase64,
+        globalTarget: schedule.globalTarget,
+        globalLogo: globalLogo || undefined,
+        rows: schedule.rows || [],
+      });
+    } catch (error) {
+      console.error('PDF indirme hatası:', error);
+      alert('PDF oluşturulurken bir hata meydana geldi.');
+    } finally {
+      setDownloadingId(null);
     }
   };
 
@@ -156,14 +181,19 @@ export default function Dashboard() {
                               Düzenle
                             </Link>
                             {/* Direct Download button */}
-                            <Link
-                              to={`/schedule/edit/${schedule.id}?download=true`}
-                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-white"
+                            <button
+                              onClick={() => handleDirectDownload(schedule.id)}
+                              disabled={downloadingId === schedule.id}
+                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-white disabled:opacity-60"
                               style={{ background: 'linear-gradient(135deg, #B76E79, #D4959E)', boxShadow: '0 2px 8px rgba(183,110,121,0.3)' }}
                             >
-                              <Download size={13} />
-                              İndir
-                            </Link>
+                              {downloadingId === schedule.id ? (
+                                <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                              ) : (
+                                <Download size={13} />
+                              )}
+                              {downloadingId === schedule.id ? 'Hazırlanıyor...' : 'İndir'}
+                            </button>
                             {/* Delete button */}
                             <button
                               onClick={() => handleDelete(schedule.id)}
