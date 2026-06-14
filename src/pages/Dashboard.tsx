@@ -82,8 +82,10 @@ export default function Dashboard() {
       const zipContent = await zip.generateAsync({ type: 'blob' });
       const zipName = `Kayit-Planlari-${new Date().toISOString().split('T')[0]}.zip`;
 
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
       // Mobilde Paylaş veya İndir
-      if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([zipContent], zipName, { type: 'application/zip' })] })) {
+      if (isMobile && navigator.share && navigator.canShare && navigator.canShare({ files: [new File([zipContent], zipName, { type: 'application/zip' })] })) {
         const file = new File([zipContent], zipName, { type: 'application/zip' });
         await navigator.share({
           title: 'Kayıt Planları ZIP',

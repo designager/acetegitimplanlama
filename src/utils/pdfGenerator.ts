@@ -474,7 +474,9 @@ export const exportScheduleFromData = async ({
   try {
     const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
 
-    if (navigator.share) {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    if (isMobile && navigator.share) {
       // Eğer tarayıcı canShare API'sini destekliyorsa dosyayı kontrol et
       if (navigator.canShare && !navigator.canShare({ files: [file] })) {
         pdf.save(fileName);
