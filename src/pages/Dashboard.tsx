@@ -62,6 +62,7 @@ export default function Dashboard() {
       const zip = typeof JSZip === 'function' ? new JSZip() : new (JSZip as any).default();
       const { exportScheduleFromData } = await import('../utils/pdfGenerator');
 
+      let counter = 1;
       for (const schedule of filteredSchedules) {
         const institution = institutions.find(i => i.id === schedule.institutionId);
         if (!institution) continue;
@@ -76,8 +77,9 @@ export default function Dashboard() {
         });
 
         if (blob) {
-          const fileName = `kayit-plani-${institution.name.toLowerCase().replace(/\s+/g, '-')}-${schedule.date}.pdf`;
+          const fileName = `kayit-plani-${institution.name.toLowerCase().replace(/\s+/g, '-')}-${schedule.date}-${counter}.pdf`;
           zip.file(fileName, blob);
+          counter++;
         }
       }
 
@@ -334,7 +336,7 @@ export default function Dashboard() {
                               style={{ background: 'linear-gradient(135deg, #B76E79, #D4959E)', boxShadow: '0 2px 8px rgba(183,110,121,0.3)' }}
                             >
                               {downloadingId === schedule.id ? (
-                                <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                               ) : (
                                 <Download size={13} />
                               )}
@@ -389,7 +391,7 @@ export default function Dashboard() {
                         style={{ background: 'linear-gradient(135deg, #B76E79, #D4959E)', boxShadow: '0 2px 8px rgba(183,110,121,0.3)' }}
                       >
                         {downloadingId === schedule.id ? (
-                          <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                         ) : (
                           <Download size={14} />
                         )}
