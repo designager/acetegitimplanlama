@@ -17,19 +17,20 @@ export const SettingsPage = () => {
         
         {/* Şirket Logosu */}
         <div style={{
-          background: 'white',
+          background: 'rgba(10, 17, 40, 0.85)',
           borderRadius: '20px',
           padding: '28px',
-          border: '1px solid rgba(27,42,107,0.07)',
-          boxShadow: '0 4px 20px rgba(27,42,107,0.05)',
+          border: '1px solid rgba(183,110,121,0.25)',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
+          backdropFilter: 'blur(12px)',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-            <div style={{ padding: '8px', background: 'rgba(183,110,121,0.1)', borderRadius: '10px' }}>
+            <div style={{ padding: '8px', background: 'rgba(183,110,121,0.15)', borderRadius: '10px' }}>
               <ImageIcon size={20} color="#B76E79" />
             </div>
-            <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.25rem', color: '#111C4E', margin: 0 }}>Şirket Ana Logosu</h2>
+            <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.25rem', color: '#F2E0E2', margin: 0 }}>Şirket Ana Logosu</h2>
           </div>
-          <p style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '24px', lineHeight: 1.5 }}>
+          <p style={{ fontSize: '0.875rem', color: '#9CA3AF', marginBottom: '24px', lineHeight: 1.5 }}>
             Bu logo (Örn: ACET Yönetim), PDF çıktılarında kurum logosunun üzerinde merkezde gösterilir. Kurumsal kimliğinizi yansıtan yüksek çözünürlüklü bir görsel tercih edin.
           </p>
           <LogoUploader 
@@ -41,20 +42,21 @@ export const SettingsPage = () => {
 
         {/* Tarayıcı Ayarları */}
         <div style={{
-          background: 'white',
+          background: 'rgba(10, 17, 40, 0.85)',
           borderRadius: '20px',
           padding: '28px',
-          border: '1px solid rgba(27,42,107,0.07)',
-          boxShadow: '0 4px 20px rgba(27,42,107,0.05)',
+          border: '1px solid rgba(183,110,121,0.25)',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
+          backdropFilter: 'blur(12px)',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-            <div style={{ padding: '8px', background: 'rgba(27,42,107,0.08)', borderRadius: '10px' }}>
-              <MonitorSmartphone size={20} color="#1B2A6B" />
+            <div style={{ padding: '8px', background: 'rgba(183,110,121,0.15)', borderRadius: '10px' }}>
+              <MonitorSmartphone size={20} color="#B76E79" />
             </div>
-            <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.25rem', color: '#111C4E', margin: 0 }}>Tarayıcı Görünümü</h2>
+            <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.25rem', color: '#F2E0E2', margin: 0 }}>Tarayıcı Görünümü</h2>
           </div>
-          <p style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '24px', lineHeight: 1.5 }}>
-            Sitenin tarayıcı sekmesinde nasıl görüneceğini ayarlayın. Sekme başlığı ve simgesi (favicon) sistem genelinde anında uygulanır.
+          <p style={{ fontSize: '0.875rem', color: '#9CA3AF', marginBottom: '24px', lineHeight: 1.5 }}>
+            Sitenin tarayıcı sekmesinde nasıl görüneçeğini ayarlayın. Sekme başlığı ve simgesi (favicon) sistem genelinde anında uygulanır.
           </p>
           
           <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px' }}>

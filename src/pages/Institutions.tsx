@@ -41,14 +41,15 @@ export const Institutions = () => {
 
       {isAdding && (
         <div style={{
-          background: 'white',
+          background: 'rgba(10, 17, 40, 0.85)',
           borderRadius: '20px',
           padding: '28px',
           marginBottom: '24px',
-          border: '1px solid rgba(183,110,121,0.2)',
-          boxShadow: '0 8px 32px rgba(183,110,121,0.1)',
+          border: '1px solid rgba(183,110,121,0.3)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+          backdropFilter: 'blur(20px)'
         }}>
-          <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', color: '#111C4E', marginBottom: '20px' }}>
+          <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', color: '#F2E0E2', marginBottom: '20px' }}>
             {editingId ? 'Kurumu Düzenle' : 'Yeni Kurum'}
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
@@ -68,7 +69,7 @@ export const Institutions = () => {
               <LogoUploader currentLogo={logoBase64} onLogoSelect={setLogoBase64} onLogoRemove={() => setLogoBase64('')} />
             </div>
           </div>
-          <div style={{ display: 'flex', gap: '10px', marginTop: '20px', paddingTop: '20px', borderTop: '1px solid rgba(27,42,107,0.07)' }}>
+          <div style={{ display: 'flex', gap: '10px', marginTop: '20px', paddingTop: '20px', borderTop: '1px solid rgba(183,110,121,0.1)' }}>
             <button onClick={handleSave} className="btn-primary">
               <Check size={15} /> Kaydet
             </button>
@@ -82,32 +83,33 @@ export const Institutions = () => {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
         {institutions.map(inst => (
           <div key={inst.id} style={{
-            background: 'white',
+            background: 'rgba(10, 17, 40, 0.6)',
+            backdropFilter: 'blur(12px)',
             borderRadius: '18px',
             padding: '24px',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             textAlign: 'center',
-            border: '1px solid rgba(27,42,107,0.07)',
-            boxShadow: '0 4px 20px rgba(27,42,107,0.05)',
+            border: '1px solid rgba(183,110,121,0.2)',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
             transition: 'all 0.2s ease',
           }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 32px rgba(27,42,107,0.1)'; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 20px rgba(27,42,107,0.05)'; }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 32px rgba(0,0,0,0.3)'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 20px rgba(0,0,0,0.2)'; }}
           >
             {inst.logoBase64 ? (
               <img src={inst.logoBase64} alt={inst.name} style={{ height: '56px', objectFit: 'contain', marginBottom: '16px' }} />
             ) : (
-              <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'linear-gradient(135deg, rgba(27,42,107,0.08), rgba(183,110,121,0.08))', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-                <Building2 size={24} color="#1B2A6B" opacity={0.4} />
+              <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'linear-gradient(135deg, rgba(10, 17, 40, 0.8), rgba(183,110,121,0.15))', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+                <Building2 size={24} color="#B76E79" opacity={0.6} />
               </div>
             )}
-            <h3 style={{ fontWeight: 600, fontSize: '0.95rem', color: '#111C4E', marginBottom: '16px' }}>{inst.name}</h3>
-            <div style={{ display: 'flex', gap: '8px', width: '100%', paddingTop: '16px', borderTop: '1px solid rgba(27,42,107,0.06)', marginTop: 'auto' }}>
-              <button onClick={() => startEdit(inst)} style={{ flex: 1, padding: '8px', borderRadius: '8px', border: 'none', background: 'rgba(27,42,107,0.05)', cursor: 'pointer', color: '#1B2A6B', display: 'flex', justifyContent: 'center', transition: 'background 0.15s' }}
-                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(27,42,107,0.12)')}
-                onMouseLeave={e => (e.currentTarget.style.background = 'rgba(27,42,107,0.05)')}>
+            <h3 style={{ fontWeight: 600, fontSize: '0.95rem', color: '#F3F4F6', marginBottom: '16px' }}>{inst.name}</h3>
+            <div style={{ display: 'flex', gap: '8px', width: '100%', paddingTop: '16px', borderTop: '1px solid rgba(183,110,121,0.1)', marginTop: 'auto' }}>
+              <button onClick={() => startEdit(inst)} style={{ flex: 1, padding: '8px', borderRadius: '8px', border: 'none', background: 'rgba(183,110,121,0.1)', cursor: 'pointer', color: '#F2E0E2', display: 'flex', justifyContent: 'center', transition: 'background 0.15s' }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(183,110,121,0.2)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'rgba(183,110,121,0.1)')}>
                 <Edit2 size={15} />
               </button>
               <button onClick={() => { if (window.confirm('Bu kurumu silmek istediğinize emin misiniz?')) deleteInstitution(inst.id); }}
@@ -120,9 +122,9 @@ export const Institutions = () => {
           </div>
         ))}
         {institutions.length === 0 && !isAdding && (
-          <div style={{ gridColumn: '1 / -1', padding: '64px 24px', textAlign: 'center', background: 'rgba(255,255,255,0.6)', borderRadius: '16px', border: '2px dashed rgba(27,42,107,0.12)' }}>
-            <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: 'rgba(27,42,107,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-              <Building2 size={24} color="#1B2A6B" opacity={0.4} />
+          <div style={{ gridColumn: '1 / -1', padding: '64px 24px', textAlign: 'center', background: 'rgba(10, 17, 40, 0.5)', borderRadius: '16px', border: '2px dashed rgba(183,110,121,0.2)' }}>
+            <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: 'rgba(183,110,121,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+              <Building2 size={24} color="#B76E79" opacity={0.4} />
             </div>
             <p style={{ color: '#9CA3AF', fontWeight: 500 }}>Henüz kurum eklenmedi</p>
             <p style={{ fontSize: '0.8rem', color: '#C4C9D4', marginTop: '4px' }}>Sağ üstteki butonu kullanarak kurum ekleyebilirsiniz</p>

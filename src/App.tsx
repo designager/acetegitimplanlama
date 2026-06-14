@@ -63,7 +63,7 @@ function AppContent() {
 
   if (isLoading && session) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#EDEAE4]">
+      <div className="flex h-screen items-center justify-center bg-[#050A1F]">
         <div className="w-12 h-12 border-4 border-[#B76E79]/20 border-t-[#B76E79] rounded-full animate-spin"></div>
       </div>
     );
@@ -72,7 +72,7 @@ function AppContent() {
   if (!session) {
     return (
       <Suspense fallback={
-        <div className="flex h-screen items-center justify-center bg-[#EDEAE4]">
+        <div className="flex h-screen items-center justify-center bg-[#050A1F]">
           <div className="w-12 h-12 border-4 border-[#B76E79]/20 border-t-[#B76E79] rounded-full animate-spin"></div>
         </div>
       }>
@@ -82,11 +82,11 @@ function AppContent() {
   }
 
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-[#EDEAE4] overflow-hidden">
+    <div className="flex flex-col md:flex-row h-screen bg-[#050A1F] overflow-hidden">
       {/* Sidebar / Top Nav */}
       <aside className="w-full md:w-[240px] shrink-0 flex flex-col relative z-10" style={{
-        background: 'linear-gradient(175deg, #111C4E 0%, #1B2A6B 60%, #151f54 100%)',
-        boxShadow: '4px 0 32px rgba(17, 28, 78, 0.25)',
+        background: 'linear-gradient(175deg, #0A1128 0%, #02040A 100%)',
+        boxShadow: '4px 0 32px rgba(0, 0, 0, 0.5)',
       }}>
         {/* Decorative glow */}
         <div style={{
@@ -139,7 +139,7 @@ function AppContent() {
       <main className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin">
         <Suspense fallback={
           <div className="flex h-full items-center justify-center">
-            <div className="w-8 h-8 border-4 border-[#1B2A6B]/10 border-t-[#1B2A6B] rounded-full animate-spin"></div>
+            <div className="w-8 h-8 border-4 border-[#B76E79]/10 border-t-[#B76E79] rounded-full animate-spin"></div>
           </div>
         }>
           <Routes>

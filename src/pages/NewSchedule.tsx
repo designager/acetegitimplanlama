@@ -1,5 +1,5 @@
-import { useState, useMemo, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { ScheduleTable } from '../components/ScheduleTable';
 import { generateTimeSlots } from '../utils/timeHelpers';
@@ -9,6 +9,9 @@ import { Save, Download, SlidersHorizontal, ChevronDown, Target, MapPin } from '
 export const NewSchedule = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isAutoDownload = new URLSearchParams(location.search).get('download') === 'true';
+  const autoDownloadFired = useRef(false);
   const { institutions, schedules, globalLogo, addSchedule, updateSchedule } = useStore();
 
   const [selectedInstId, setSelectedInstId] = useState<string>(institutions[0]?.id || '');
@@ -40,6 +43,19 @@ export const NewSchedule = () => {
       }
     }
   }, [id, schedules]);
+
+  // Auto-trigger PDF download when ?download=true is in URL
+  useEffect(() => {
+    if (
+      isAutoDownload &&
+      !autoDownloadFired.current &&
+      selectedInstId &&
+      rows.length > 0
+    ) {
+      autoDownloadFired.current = true;
+      handleDownloadPDF();
+    }
+  }, [isAutoDownload, selectedInstId, rows]);
 
   const handleDownloadPDF = async () => {
     if (!selectedInstitution) { alert('Lütfen bir kurum seçin.'); return; }
@@ -113,7 +129,7 @@ export const NewSchedule = () => {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row justify-between items-start mb-6 md:mb-7 flex-wrap gap-4 md:gap-4">
         <div>
-          <h1 className="font-display text-[1.5rem] md:text-[1.875rem] font-bold text-[#111C4E] mb-1">
+          <h1 className="font-display text-[1.5rem] md:text-[1.875rem] font-bold text-[#F2E0E2] mb-1">
             {id ? 'Planlamayı Düzenle' : 'Kayıt Planı'}
           </h1>
           <p className="text-[#9CA3AF] text-xs md:text-sm">{id ? 'Mevcut planlamayı güncelleyin veya yeniden PDF indirin.' : 'Genel planlama oluşturun ve PDF olarak kaydedin.'}</p>

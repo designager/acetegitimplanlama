@@ -9,8 +9,8 @@
 
   body {
     @apply antialiased font-body;
-    background: #F0EDE8;
-    color: #1A1A2E;
+    background: #050A1F;
+    color: #F3F4F6;
     min-height: 100vh;
   }
 }
@@ -58,45 +58,45 @@
 
   /* ── Cards ── */
   .card {
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(10, 17, 40, 0.85);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(183, 110, 121, 0.2);
     border-radius: 16px;
     padding: 24px;
-    box-shadow: 0 4px 24px rgba(27, 42, 107, 0.06), 0 1px 4px rgba(0,0,0,0.04);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.2), 0 1px 4px rgba(0,0,0,0.1);
   }
 
   .card-glass {
-    background: rgba(255, 255, 255, 0.6);
+    background: rgba(10, 17, 40, 0.6);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(183, 110, 121, 0.3);
     border-radius: 20px;
-    box-shadow: 0 8px 32px rgba(27, 42, 107, 0.08), inset 0 1px 0 rgba(255,255,255,0.9);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
   }
 
   /* ── Inputs ── */
   .input {
     @apply w-full px-4 py-2.5 rounded-xl text-sm font-medium;
-    background: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(27, 42, 107, 0.12);
-    color: #1A1A2E;
+    background: rgba(10, 17, 40, 0.8);
+    border: 1px solid rgba(183, 110, 121, 0.3);
+    color: #F3F4F6;
     transition: all 0.2s ease;
     outline: none;
   }
   .input::placeholder {
-    color: #9CA3AF;
+    color: #6B7280;
     font-weight: 400;
   }
   .input:focus {
     border-color: #B76E79;
     box-shadow: 0 0 0 3px rgba(183, 110, 121, 0.12);
-    background: white;
+    background: rgba(183, 110, 121, 0.05);
   }
 
   /* ── Labels ── */
   .field-label {
     @apply block text-xs font-semibold uppercase tracking-wider mb-1.5;
-    color: #6B7280;
+    color: #9CA3AF;
     letter-spacing: 0.06em;
   }
 
@@ -115,12 +115,12 @@
     font-family: 'Playfair Display', serif;
     font-size: 2rem;
     font-weight: 700;
-    color: #111C4E;
+    color: #F2E0E2;
     line-height: 1.2;
     margin-bottom: 0.25rem;
   }
   .page-header p {
-    color: #6B7280;
+    color: #9CA3AF;
     font-size: 0.9rem;
   }
 
@@ -151,11 +151,11 @@
     border-radius: 0 12px 0 0;
   }
   .schedule-table tbody tr {
-    border-bottom: 1px solid rgba(27, 42, 107, 0.06);
+    border-bottom: 1px solid rgba(183, 110, 121, 0.1);
     transition: background 0.15s ease;
   }
   .schedule-table tbody tr:hover {
-    background: rgba(183, 110, 121, 0.04);
+    background: rgba(183, 110, 121, 0.08);
   }
   .schedule-table tbody tr:last-child {
     border-bottom: none;
@@ -168,7 +168,7 @@
     padding: 16px 20px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.85rem;
-    color: #6B7280;
+    color: #9CA3AF;
     white-space: nowrap;
     vertical-align: middle;
   }
@@ -179,16 +179,16 @@
     outline: none;
     padding: 10px 12px;
     font-size: 0.875rem;
-    color: #1A1A2E;
+    color: #F3F4F6;
     border-radius: 8px;
     transition: background 0.15s ease, box-shadow 0.15s ease;
     font-family: 'Inter', sans-serif;
   }
   .schedule-input::placeholder {
-    color: #D1D5DB;
+    color: #4B5563;
   }
   .schedule-input:focus {
-    background: white;
+    background: rgba(183, 110, 121, 0.1);
     box-shadow: 0 0 0 2px rgba(183, 110, 121, 0.25);
   }
 
