@@ -122,15 +122,19 @@ function AppContent() {
 
         {/* Logo area */}
         <div className="px-5 pt-7 pb-5 border-b border-white/5 mb-2">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0 shadow-[0_4px_12px_rgba(183,110,121,0.4)]" style={{ background: 'linear-gradient(135deg, #B76E79 0%, #D4959E 100%)' }}>
-              <CalendarDays size={18} color="white" strokeWidth={2} />
+          {globalLogo ? (
+            <img src={globalLogo} alt="Şirket Logosu" className="h-11 object-contain" />
+          ) : (
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0 shadow-[0_4px_12px_rgba(183,110,121,0.4)]" style={{ background: 'linear-gradient(135deg, #B76E79 0%, #D4959E 100%)' }}>
+                <CalendarDays size={18} color="white" strokeWidth={2} />
+              </div>
+              <div>
+                <div className="font-display text-[1rem] font-bold text-[#F2E0E2] leading-tight">Kayıt</div>
+                <div className="font-display text-[1rem] font-bold text-[#F2E0E2]/60 leading-tight">Planı</div>
+              </div>
             </div>
-            <div>
-              <div className="font-display text-[1rem] font-bold text-[#F2E0E2] leading-tight">Kayıt</div>
-              <div className="font-display text-[1rem] font-bold text-[#F2E0E2]/60 leading-tight">Planı</div>
-            </div>
-          </div>
+          )}
         </div>
 
         {/* Nav */}
@@ -158,12 +162,16 @@ function AppContent() {
 
       {/* Mobile Top Bar */}
       <div className="md:hidden flex items-center justify-between px-4 py-3 border-b border-white/5 shrink-0" style={{ background: 'linear-gradient(90deg, #0A1128 0%, #02040A 100%)' }}>
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #B76E79 0%, #D4959E 100%)' }}>
-            <CalendarDays size={14} color="white" strokeWidth={2} />
+        {globalLogo ? (
+          <img src={globalLogo} alt="Şirket Logosu" className="h-8 object-contain" />
+        ) : (
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #B76E79 0%, #D4959E 100%)' }}>
+              <CalendarDays size={14} color="white" strokeWidth={2} />
+            </div>
+            <span className="font-display text-[0.95rem] font-bold text-[#F2E0E2]">Kayıt Planı</span>
           </div>
-          <span className="font-display text-[0.95rem] font-bold text-[#F2E0E2]">Kayıt Planı</span>
-        </div>
+        )}
         <button onClick={signOut} className="p-2 text-white/40 hover:text-white/70 transition-colors">
           <LogOut size={18} strokeWidth={1.8} />
         </button>
