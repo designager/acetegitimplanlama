@@ -56,8 +56,10 @@ export default function Dashboard() {
     setIsZipping(true);
 
     try {
-      const JSZip = (await import('jszip')).default;
-      const zip = new JSZip();
+      const jszipModule = await import('jszip');
+      const JSZip = jszipModule.default || jszipModule;
+      // JSZip is a constructor, but depending on the module format, it might need to be called differently
+      const zip = typeof JSZip === 'function' ? new JSZip() : new (JSZip as any).default();
       const { exportScheduleFromData } = await import('../utils/pdfGenerator');
 
       for (const schedule of filteredSchedules) {
