@@ -23,6 +23,11 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({ timeSlots, rows, o
     onRowsChange(rows.map(r => r.id === id ? { ...r, [field]: value } : r));
   };
 
+  const applyAssigneeToAll = (assigneeName: string) => {
+    if (!assigneeName) return;
+    onRowsChange(rows.map(r => ({ ...r, assignee: assigneeName })));
+  };
+
   return (
     <div style={{ overflowX: 'auto', borderRadius: '16px', border: '1px solid rgba(27,42,107,0.08)', boxShadow: '0 4px 24px rgba(27,42,107,0.06)' }}>
       <table className="schedule-table">
@@ -45,7 +50,7 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({ timeSlots, rows, o
               <td className="schedule-time-cell">
                 {row.timeSlot}
               </td>
-              <td className="schedule-table-cell">
+              <td className="schedule-table-cell" style={{ position: 'relative' }}>
                 <input
                   type="text"
                   value={row.assignee || ''}
@@ -53,6 +58,17 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({ timeSlots, rows, o
                   className="schedule-input"
                   placeholder="Kişi adı..."
                 />
+                {index === 0 && row.assignee && (
+                  <div className="absolute -bottom-6 left-3 z-10">
+                    <button
+                      onClick={() => applyAssigneeToAll(row.assignee || '')}
+                      className="text-[10px] font-semibold bg-[#B76E79] text-white px-2 py-1 rounded shadow-md hover:bg-[#A35D68] transition-colors whitespace-nowrap"
+                      title="Bu kişiyi tüm satırlara kopyala"
+                    >
+                      Tümüne Uygula
+                    </button>
+                  </div>
+                )}
               </td>
               <td className="schedule-table-cell">
                 <input
