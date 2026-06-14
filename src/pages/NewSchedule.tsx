@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { ScheduleTable } from '../components/ScheduleTable';
 import { generateTimeSlots } from '../utils/timeHelpers';
@@ -6,7 +7,9 @@ import type { ScheduleConfig, ScheduleRow } from '../types';
 import { Save, Download, SlidersHorizontal, ChevronDown, Target, MapPin } from 'lucide-react';
 
 export const NewSchedule = () => {
-  const { institutions, globalLogo, addSchedule } = useStore();
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { institutions, schedules, globalLogo, addSchedule, updateSchedule } = useStore();
 
   const [selectedInstId, setSelectedInstId] = useState<string>(institutions[0]?.id || '');
   const selectedInstitution = useMemo(() => institutions.find(i => i.id === selectedInstId), [institutions, selectedInstId]);
@@ -25,6 +28,19 @@ export const NewSchedule = () => {
 
   const timeSlots = useMemo(() => generateTimeSlots(config.startTime, config.endTime, config.intervalMinutes), [config]);
 
+  // Load existing schedule if in edit mode
+  useEffect(() => {
+    if (id) {
+      const existing = schedules.find(s => s.id === id);
+      if (existing) {
+        setSelectedInstId(existing.institutionId);
+        if (existing.globalTarget) setGlobalTarget(existing.globalTarget);
+        if (existing.config) setConfig(existing.config);
+        if (existing.rows) setRows(existing.rows);
+      }
+    }
+  }, [id, schedules]);
+
   const handleDownloadPDF = async () => {
     if (!selectedInstitution) { alert('Lütfen bir kurum seçin.'); return; }
     setIsPdfLoading(true);
@@ -40,15 +56,23 @@ export const NewSchedule = () => {
     });
     
     // PDF başarıyla oluşturulunca, sisteme (Dashboard için) kaydet
-    addSchedule({
-      id: crypto.randomUUID(),
+    const scheduleData = {
       institutionId: selectedInstitution.id,
       date: new Date().toISOString().split('T')[0],
-      createdAt: new Date().toISOString(),
       rows: rows,
       globalTarget: globalTarget,
       config: config
+    };
+
+    if (id) {
+      updateSchedule(id, scheduleData);
+    } else {
+      addSchedule({
+        id: crypto.randomUUID(),
+        createdAt: new Date().toISOString(),
+        ...scheduleData
       });
+    }
     } catch (error) {
       console.error('PDF Export Error:', error);
       alert('PDF oluşturulurken bir hata meydana geldi.');
@@ -59,16 +83,28 @@ export const NewSchedule = () => {
 
   const handleSaveDraft = () => {
     if (!selectedInstitution) { alert('Lütfen önce bir kurum seçin.'); return; }
-    addSchedule({
-      id: crypto.randomUUID(),
+    
+    const scheduleData = {
       institutionId: selectedInstitution.id,
       date: new Date().toISOString().split('T')[0],
-      createdAt: new Date().toISOString(),
       rows: rows,
       globalTarget: globalTarget,
       config: config
-    });
-    alert('Planlama sisteme kaydedildi!');
+    };
+
+    if (id) {
+      updateSchedule(id, scheduleData);
+      alert('Planlama başarıyla güncellendi!');
+    } else {
+      const newId = crypto.randomUUID();
+      addSchedule({
+        id: newId,
+        createdAt: new Date().toISOString(),
+        ...scheduleData
+      });
+      alert('Planlama sisteme kaydedildi!');
+      navigate(`/schedule/edit/${newId}`, { replace: true });
+    }
   };
 
   return (
@@ -78,9 +114,9 @@ export const NewSchedule = () => {
       <div className="flex flex-col md:flex-row justify-between items-start mb-6 md:mb-7 flex-wrap gap-4 md:gap-4">
         <div>
           <h1 className="font-display text-[1.5rem] md:text-[1.875rem] font-bold text-[#111C4E] mb-1">
-            Kayıt Planı
+            {id ? 'Planlamayı Düzenle' : 'Kayıt Planı'}
           </h1>
-          <p className="text-[#9CA3AF] text-xs md:text-sm">Genel planlama oluşturun ve PDF olarak kaydedin.</p>
+          <p className="text-[#9CA3AF] text-xs md:text-sm">{id ? 'Mevcut planlamayı güncelleyin veya yeniden PDF indirin.' : 'Genel planlama oluşturun ve PDF olarak kaydedin.'}</p>
         </div>
         <div className="flex w-full md:w-auto gap-2 md:gap-3 items-center">
           <button onClick={handleSaveDraft} className="btn-secondary flex-1 md:flex-none justify-center">

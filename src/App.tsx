@@ -117,6 +117,7 @@ function AppContent() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/schedule/new" element={<NewSchedule />} />
+            <Route path="/schedule/edit/:id" element={<NewSchedule />} />
             <Route path="/institutions" element={<Institutions />} />
             <Route path="/settings" element={<SettingsPage />} />
           </Routes>
