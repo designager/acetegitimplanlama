@@ -7,6 +7,8 @@ interface LogoUploaderProps {
   onLogoRemove: () => void;
 }
 
+import { processLogoForDarkTheme } from '../utils/imageUtils';
+
 export const LogoUploader: React.FC<LogoUploaderProps> = ({ currentLogo, onLogoSelect, onLogoRemove }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string>('');
@@ -22,9 +24,11 @@ export const LogoUploader: React.FC<LogoUploaderProps> = ({ currentLogo, onLogoS
     
     setError('');
     const reader = new FileReader();
-    reader.onload = (event) => {
+    reader.onload = async (event) => {
       if (event.target?.result) {
-        onLogoSelect(event.target.result as string);
+        const originalBase64 = event.target.result as string;
+        const processedBase64 = await processLogoForDarkTheme(originalBase64);
+        onLogoSelect(processedBase64);
       }
     };
     reader.readAsDataURL(file);
@@ -33,7 +37,7 @@ export const LogoUploader: React.FC<LogoUploaderProps> = ({ currentLogo, onLogoS
   return (
     <div className="mt-2">
       {currentLogo ? (
-        <div className="relative inline-block border rounded-lg p-2 bg-gray-50">
+        <div className="relative inline-block border border-white/10 rounded-lg p-3 bg-[#0A1128]">
           <img src={currentLogo} alt="Logo" className="h-20 object-contain" />
           <button
             type="button"
@@ -45,7 +49,7 @@ export const LogoUploader: React.FC<LogoUploaderProps> = ({ currentLogo, onLogoS
         </div>
       ) : (
         <div 
-          className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:bg-gray-50 cursor-pointer transition-colors"
+          className="border-2 border-dashed border-white/20 rounded-lg p-6 text-center hover:bg-white/5 cursor-pointer transition-colors"
           onClick={() => fileInputRef.current?.click()}
         >
           <UploadCloud className="mx-auto text-gray-400 mb-2" size={32} />
