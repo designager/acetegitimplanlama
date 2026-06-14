@@ -76,6 +76,7 @@ export const SettingsPage = () => {
                 currentLogo={siteFavicon || undefined} 
                 onLogoSelect={setSiteFavicon} 
                 onLogoRemove={() => setSiteFavicon(null)} 
+                noConvert={true}
               />
             </div>
           </div>

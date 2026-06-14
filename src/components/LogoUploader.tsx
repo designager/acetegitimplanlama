@@ -5,11 +5,12 @@ interface LogoUploaderProps {
   currentLogo?: string;
   onLogoSelect: (base64: string) => void;
   onLogoRemove: () => void;
+  noConvert?: boolean;
 }
 
 import { processLogoForDarkTheme } from '../utils/imageUtils';
 
-export const LogoUploader: React.FC<LogoUploaderProps> = ({ currentLogo, onLogoSelect, onLogoRemove }) => {
+export const LogoUploader: React.FC<LogoUploaderProps> = ({ currentLogo, onLogoSelect, onLogoRemove, noConvert = false }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string>('');
 
@@ -27,8 +28,12 @@ export const LogoUploader: React.FC<LogoUploaderProps> = ({ currentLogo, onLogoS
     reader.onload = async (event) => {
       if (event.target?.result) {
         const originalBase64 = event.target.result as string;
-        const processedBase64 = await processLogoForDarkTheme(originalBase64);
-        onLogoSelect(processedBase64);
+        if (noConvert) {
+          onLogoSelect(originalBase64);
+        } else {
+          const processedBase64 = await processLogoForDarkTheme(originalBase64);
+          onLogoSelect(processedBase64);
+        }
       }
     };
     reader.readAsDataURL(file);
