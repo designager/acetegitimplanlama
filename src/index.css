@@ -179,16 +179,16 @@
     outline: none;
     padding: 10px 12px;
     font-size: 0.875rem;
-    color: #F3F4F6;
+    color: #1A1A2E;
     border-radius: 8px;
     transition: background 0.15s ease, box-shadow 0.15s ease;
     font-family: 'Inter', sans-serif;
   }
   .schedule-input::placeholder {
-    color: #4B5563;
+    color: #9CA3AF;
   }
   .schedule-input:focus {
-    background: rgba(183, 110, 121, 0.1);
+    background: rgba(183, 110, 121, 0.08);
     box-shadow: 0 0 0 2px rgba(183, 110, 121, 0.25);
   }
 
