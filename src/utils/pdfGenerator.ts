@@ -366,61 +366,43 @@ export const exportScheduleFromData = async ({
   // ── Tablo başlığı + veri satırları
   const tableStartY = headerBottomY + 10;
   const colWidths = [24, 34, (pageWidth - 2 * margin - 58) * 0.55, (pageWidth - 2 * margin - 58) * 0.45];
-  const rowHeight = 9;
-  const headerHeight = 10;
+  
+  const maxTableHeight = pageHeight - tableStartY - 10; // Footer için boşluk
+  
+  let rowHeight = 9;
+  let headerHeight = 10;
+  let fontSize = 7.5;
+  
+  const totalRequiredHeight = headerHeight + rows.length * rowHeight;
+  
+  if (totalRequiredHeight > maxTableHeight) {
+    const scaleFactor = maxTableHeight / totalRequiredHeight;
+    rowHeight = rowHeight * scaleFactor;
+    headerHeight = headerHeight * scaleFactor;
+    fontSize = Math.max(4.5, fontSize * scaleFactor);
+  }
+
   let curY = tableStartY;
 
   // Başlık satırı (rose gold)
   pdf.setFillColor(183, 110, 121);
   pdf.rect(margin, curY, pageWidth - 2 * margin, headerHeight, 'F');
   pdf.setFont('helvetica', 'bold');
-  pdf.setFontSize(7.5);
+  pdf.setFontSize(fontSize);
   pdf.setTextColor(255, 255, 255);
   const headers = ['SAAT', 'GOREVLI', 'GOREV / EYLEM', 'NOTLAR'];
   let colX = margin;
   headers.forEach((h, i) => {
-    pdf.text(h, colX + 3, curY + 6.5);
+    pdf.text(h, colX + 3, curY + headerHeight * 0.65);
     colX += colWidths[i];
   });
   curY += headerHeight;
 
   // Veri satırları
   pdf.setFont('helvetica', 'normal');
-  pdf.setFontSize(8);
+  pdf.setFontSize(fontSize);
 
   rows.forEach((row, index) => {
-    // Sayfa sonu kontrolü
-    if (curY + rowHeight > pageHeight - 14) {
-      // Alt şerit + footer
-      pdf.setFillColor(183, 110, 121);
-      pdf.rect(0, pageHeight - 4, pageWidth, 4, 'F');
-      pdf.setFontSize(7);
-      pdf.setTextColor(107, 114, 128);
-      pdf.text(`Olusturma: ${new Date().toLocaleString('tr-TR')} | Kayit Plani Sistemi`, margin, pageHeight - 6);
-
-      // Yeni sayfa
-      pdf.addPage();
-      pdf.setFillColor(5, 10, 31);
-      pdf.rect(0, 0, pageWidth, pageHeight, 'F');
-      pdf.setFillColor(183, 110, 121);
-      pdf.rect(0, 0, pageWidth, 3, 'F');
-      curY = 10;
-
-      // Yeni sayfa başlık satırı
-      pdf.setFillColor(183, 110, 121);
-      pdf.rect(margin, curY, pageWidth - 2 * margin, headerHeight, 'F');
-      pdf.setFont('helvetica', 'bold');
-      pdf.setFontSize(8);
-      pdf.setTextColor(255, 255, 255);
-      let hX = margin;
-      headers.forEach((h, i) => {
-        pdf.text(h, hX + 3, curY + 6.5);
-        hX += colWidths[i];
-      });
-      curY += headerHeight;
-      pdf.setFont('helvetica', 'normal');
-      pdf.setFontSize(8);
-    }
 
     // Dönüşümlü arka plan
     const bgR = index % 2 === 0 ? 10 : 13;
@@ -438,32 +420,34 @@ export const exportScheduleFromData = async ({
       colX += w;
     });
 
+    const textY = curY + rowHeight * 0.65;
+
     // Hücre verileri
     colX = margin;
     // Saat hücresi
     pdf.setTextColor(156, 163, 175); // muted gray
     pdf.setFont('helvetica', 'bold');
-    pdf.text(normalizeTurkish(row.timeSlot || ''), colX + 2, curY + 6);
+    pdf.text(normalizeTurkish(row.timeSlot || ''), colX + 2, textY);
     colX += colWidths[0];
 
     // Görevli hücresi
     pdf.setTextColor(250, 200, 208); // slightly distinct rose tint
     pdf.setFont('helvetica', 'normal');
     const assigneeText = pdf.splitTextToSize(normalizeTurkish(row.assignee || ''), colWidths[1] - 4);
-    pdf.text(assigneeText[0] || '', colX + 2, curY + 6);
+    pdf.text(assigneeText[0] || '', colX + 2, textY);
     colX += colWidths[1];
 
     // Görev hücresi
     pdf.setTextColor(243, 244, 246); // white
     pdf.setFont('helvetica', 'normal');
     const actionText = pdf.splitTextToSize(normalizeTurkish(row.action || ''), colWidths[2] - 4);
-    pdf.text(actionText[0] || '', colX + 2, curY + 6);
+    pdf.text(actionText[0] || '', colX + 2, textY);
     colX += colWidths[2];
 
     // Notlar hücresi
     pdf.setTextColor(156, 163, 175);
     const notesText = pdf.splitTextToSize(normalizeTurkish(row.notes || ''), colWidths[3] - 4);
-    pdf.text(notesText[0] || '', colX + 2, curY + 6);
+    pdf.text(notesText[0] || '', colX + 2, textY);
 
     curY += rowHeight;
   });
