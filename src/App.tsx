@@ -57,7 +57,7 @@ const MobileNavLink = ({ to, icon: Icon, label }: { to: string; icon: React.Elem
 };
 
 function AppContent() {
-  const { siteTitle, siteFavicon, fetchInitialData, isLoading, session, checkSession, signOut } = useStore();
+  const { siteTitle, siteFavicon, fetchInitialData, isLoading, session, checkSession, signOut, globalLogo } = useStore();
 
   useEffect(() => {
     checkSession();
@@ -79,6 +79,14 @@ function AppContent() {
         document.head.appendChild(link);
       }
       link.href = siteFavicon;
+      
+      let appleLink = document.querySelector("link[rel='apple-touch-icon']") as HTMLLinkElement;
+      if (!appleLink) {
+        appleLink = document.createElement('link');
+        appleLink.rel = 'apple-touch-icon';
+        document.head.appendChild(appleLink);
+      }
+      appleLink.href = siteFavicon;
     }
   }, [siteTitle, siteFavicon]);
 
