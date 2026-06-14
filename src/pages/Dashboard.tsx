@@ -18,6 +18,11 @@ export default function Dashboard() {
     }
   };
 
+  useEffect(() => {
+    // Preload pdfGenerator to prevent user gesture timeouts on mobile sharing
+    import('../utils/pdfGenerator');
+  }, []);
+
   const handleDirectDownload = async (scheduleId: string) => {
     const schedule = schedules.find(s => s.id === scheduleId);
     if (!schedule) return;

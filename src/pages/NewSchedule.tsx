@@ -60,6 +60,9 @@ export const NewSchedule = () => {
 
   // Otomatik taslak kaydetme (her değişiklikte localStorage'a yaz)
   useEffect(() => {
+    // Preload pdfGenerator to prevent user gesture timeouts on mobile sharing
+    import('../utils/pdfGenerator');
+    
     if (!id) {
       localStorage.setItem('scheduleDraft', JSON.stringify({
         selectedInstId,

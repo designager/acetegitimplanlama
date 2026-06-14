@@ -468,7 +468,13 @@ export const exportScheduleFromData = async ({
     const pdfBlob = pdf.output('blob');
     const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
 
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    if (navigator.share) {
+      // Eğer tarayıcı canShare API'sini destekliyorsa dosyayı kontrol et
+      if (navigator.canShare && !navigator.canShare({ files: [file] })) {
+        pdf.save(fileName);
+        return;
+      }
+      
       await navigator.share({
         title: 'Kayıt Planı',
         text: `${institutionName} - Kayıt Planı`,
