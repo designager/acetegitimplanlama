@@ -4,7 +4,7 @@ import { useStore } from '../store/useStore';
 import { ScheduleTable } from '../components/ScheduleTable';
 import { generateTimeSlots } from '../utils/timeHelpers';
 import type { ScheduleConfig, ScheduleRow } from '../types';
-import { Save, Download, SlidersHorizontal, ChevronDown, Target, MapPin } from 'lucide-react';
+import { Save, Download, SlidersHorizontal, ChevronDown, Target, MapPin, RefreshCw } from 'lucide-react';
 
 export const NewSchedule = () => {
   const { id } = useParams<{ id: string }>();
@@ -41,8 +41,34 @@ export const NewSchedule = () => {
         if (existing.config) setConfig(existing.config);
         if (existing.rows) setRows(existing.rows);
       }
+    } else {
+      // Otomatik taslak yükleme (telefonda sekmeler arası geçişte kaybolmaması için)
+      const draft = localStorage.getItem('scheduleDraft');
+      if (draft) {
+        try {
+          const parsed = JSON.parse(draft);
+          if (parsed.selectedInstId) setSelectedInstId(parsed.selectedInstId);
+          if (parsed.globalTarget !== undefined) setGlobalTarget(parsed.globalTarget);
+          if (parsed.config) setConfig(parsed.config);
+          if (parsed.rows) setRows(parsed.rows);
+        } catch (e) {
+          console.error("Taslak yüklenirken hata:", e);
+        }
+      }
     }
   }, [id, schedules]);
+
+  // Otomatik taslak kaydetme (her değişiklikte localStorage'a yaz)
+  useEffect(() => {
+    if (!id) {
+      localStorage.setItem('scheduleDraft', JSON.stringify({
+        selectedInstId,
+        globalTarget,
+        config,
+        rows
+      }));
+    }
+  }, [id, selectedInstId, globalTarget, config, rows]);
 
   // Auto-trigger PDF download when ?download=true is in URL
   useEffect(() => {
@@ -118,9 +144,19 @@ export const NewSchedule = () => {
         createdAt: new Date().toISOString(),
         ...scheduleData
       });
+      localStorage.removeItem('scheduleDraft'); // Kaydettikten sonra taslağı temizle
       alert('Planlama sisteme kaydedildi!');
       navigate(`/schedule/edit/${newId}`, { replace: true });
     }
+  };
+
+  const handleReset = () => {
+    if (!window.confirm('Ekranda yazdığınız tüm verileri sıfırlamak istediğinize emin misiniz?')) return;
+    localStorage.removeItem('scheduleDraft');
+    setSelectedInstId(institutions[0]?.id || '');
+    setGlobalTarget('');
+    setConfig({ startTime: '08:30', endTime: '19:30', intervalMinutes: 30 });
+    setRows([]);
   };
 
   return (
@@ -135,6 +171,12 @@ export const NewSchedule = () => {
           <p className="text-[#9CA3AF] text-xs md:text-sm">{id ? 'Mevcut planlamayı güncelleyin veya yeniden PDF indirin.' : 'Genel planlama oluşturun ve PDF olarak kaydedin.'}</p>
         </div>
         <div className="flex w-full md:w-auto gap-2 md:gap-3 items-center">
+          {!id && (
+            <button onClick={handleReset} className="flex-1 md:flex-none justify-center px-3 py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl text-sm font-semibold transition-colors flex items-center gap-2 border border-red-500/20">
+              <RefreshCw size={15} />
+              <span className="whitespace-nowrap">Sıfırla</span>
+            </button>
+          )}
           <button onClick={handleSaveDraft} className="btn-secondary flex-1 md:flex-none justify-center">
             <Save size={15} />
             <span className="whitespace-nowrap">Taslak Kaydet</span>
