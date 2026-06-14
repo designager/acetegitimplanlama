@@ -1,12 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { CalendarDays, Lock, Mail, Loader2, LogIn } from 'lucide-react';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('rememberedEmail');
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setRememberMe(true);
+    }
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,6 +33,12 @@ export default function Login() {
           setError('E-posta veya şifre hatalı.');
         } else {
           setError(error.message);
+        }
+      } else {
+        if (rememberMe) {
+          localStorage.setItem('rememberedEmail', email);
+        } else {
+          localStorage.removeItem('rememberedEmail');
         }
       }
     } catch (err: any) {
@@ -93,10 +108,29 @@ export default function Login() {
             </div>
           </div>
 
+          <div className="flex items-center justify-between mt-2">
+            <label className="flex items-center gap-2 cursor-pointer group">
+              <div className="relative flex items-center justify-center w-5 h-5">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="peer appearance-none w-5 h-5 border-2 border-gray-300 rounded-[6px] checked:border-[#B76E79] checked:bg-[#B76E79] transition-all cursor-pointer"
+                />
+                <svg className="absolute w-3 h-3 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <span className="text-sm font-medium text-gray-600 group-hover:text-[#111C4E] transition-colors select-none">
+                Beni Hatırla
+              </span>
+            </label>
+          </div>
+
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#1B2A6B] hover:bg-[#111C4E] text-white font-medium py-3 rounded-xl transition-colors flex items-center justify-center gap-2 mt-2 disabled:opacity-70"
+            className="w-full bg-[#1B2A6B] hover:bg-[#111C4E] text-white font-medium py-3 rounded-xl transition-colors flex items-center justify-center gap-2 mt-4 disabled:opacity-70"
           >
             {loading ? (
               <Loader2 size={18} className="animate-spin" />
