@@ -88,14 +88,14 @@ export const NewSchedule = () => {
     setIsPdfLoading(true);
     
     try {
-      const { exportScheduleToPDF } = await import('../utils/pdfGenerator');
-      await exportScheduleToPDF({
-      tableElementId: 'schedule-table-container',
-      institutionName: selectedInstitution.name,
-      institutionLogo: selectedInstitution.logoBase64,
-      globalTarget,
-      globalLogo: globalLogo || undefined,
-    });
+      const { exportScheduleFromData } = await import('../utils/pdfGenerator');
+      await exportScheduleFromData({
+        institutionName: selectedInstitution.name,
+        institutionLogo: selectedInstitution.logoBase64,
+        globalTarget,
+        globalLogo: globalLogo || undefined,
+        rows: rows,
+      });
     
     // PDF başarıyla oluşturulunca, sisteme (Dashboard için) kaydet
     const scheduleData = {
@@ -170,7 +170,7 @@ export const NewSchedule = () => {
           </h1>
           <p className="text-[#9CA3AF] text-xs md:text-sm">{id ? 'Mevcut planlamayı güncelleyin veya yeniden PDF indirin.' : 'Genel planlama oluşturun ve PDF olarak kaydedin.'}</p>
         </div>
-        <div className="flex w-full md:w-auto gap-2 md:gap-3 items-center">
+        <div className="flex w-full md:w-auto gap-2 md:gap-3 items-center flex-wrap">
           {!id && (
             <button onClick={handleReset} className="flex-1 md:flex-none justify-center px-3 py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl text-sm font-semibold transition-colors flex items-center gap-2 border border-red-500/20">
               <RefreshCw size={15} />

@@ -29,7 +29,7 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({ timeSlots, rows, o
   };
 
   return (
-    <div style={{ overflowX: 'auto', borderRadius: '16px', border: '1px solid rgba(27,42,107,0.08)', boxShadow: '0 4px 24px rgba(27,42,107,0.06)' }}>
+    <div className="overflow-x-auto rounded-2xl border border-[#1B2A6B]/10 shadow-sm md:bg-white md:p-0">
       <table className="schedule-table">
         <thead>
           <tr>
