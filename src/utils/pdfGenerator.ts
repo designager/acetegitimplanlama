@@ -267,7 +267,7 @@ interface DataPDFExportParams {
   institutionLogo?: string;
   globalTarget?: string;
   globalLogo?: string;
-  rows: { timeSlot: string; action: string; notes?: string }[];
+  rows: { timeSlot: string; action: string; notes?: string; assignee?: string }[];
 }
 
 export const exportScheduleFromData = async ({
@@ -365,7 +365,7 @@ export const exportScheduleFromData = async ({
 
   // ── Tablo başlığı + veri satırları
   const tableStartY = headerBottomY + 10;
-  const colWidths = [32, (pageWidth - 2 * margin - 32) * 0.55, (pageWidth - 2 * margin - 32) * 0.45];
+  const colWidths = [24, 34, (pageWidth - 2 * margin - 58) * 0.55, (pageWidth - 2 * margin - 58) * 0.45];
   const rowHeight = 9;
   const headerHeight = 10;
   let curY = tableStartY;
@@ -374,9 +374,9 @@ export const exportScheduleFromData = async ({
   pdf.setFillColor(183, 110, 121);
   pdf.rect(margin, curY, pageWidth - 2 * margin, headerHeight, 'F');
   pdf.setFont('helvetica', 'bold');
-  pdf.setFontSize(8);
+  pdf.setFontSize(7.5);
   pdf.setTextColor(255, 255, 255);
-  const headers = ['SAAT', 'GOREV / EYLEM', 'NOTLAR'];
+  const headers = ['SAAT', 'GOREVLI', 'GOREV / EYLEM', 'NOTLAR'];
   let colX = margin;
   headers.forEach((h, i) => {
     pdf.text(h, colX + 3, curY + 6.5);
@@ -443,20 +443,27 @@ export const exportScheduleFromData = async ({
     // Saat hücresi
     pdf.setTextColor(156, 163, 175); // muted gray
     pdf.setFont('helvetica', 'bold');
-    pdf.text(normalizeTurkish(row.timeSlot || ''), colX + 3, curY + 6);
+    pdf.text(normalizeTurkish(row.timeSlot || ''), colX + 2, curY + 6);
     colX += colWidths[0];
+
+    // Görevli hücresi
+    pdf.setTextColor(250, 200, 208); // slightly distinct rose tint
+    pdf.setFont('helvetica', 'normal');
+    const assigneeText = pdf.splitTextToSize(normalizeTurkish(row.assignee || ''), colWidths[1] - 4);
+    pdf.text(assigneeText[0] || '', colX + 2, curY + 6);
+    colX += colWidths[1];
 
     // Görev hücresi
     pdf.setTextColor(243, 244, 246); // white
     pdf.setFont('helvetica', 'normal');
-    const actionText = pdf.splitTextToSize(normalizeTurkish(row.action || ''), colWidths[1] - 6);
-    pdf.text(actionText[0] || '', colX + 3, curY + 6);
-    colX += colWidths[1];
+    const actionText = pdf.splitTextToSize(normalizeTurkish(row.action || ''), colWidths[2] - 4);
+    pdf.text(actionText[0] || '', colX + 2, curY + 6);
+    colX += colWidths[2];
 
     // Notlar hücresi
     pdf.setTextColor(156, 163, 175);
-    const notesText = pdf.splitTextToSize(normalizeTurkish(row.notes || ''), colWidths[2] - 6);
-    pdf.text(notesText[0] || '', colX + 3, curY + 6);
+    const notesText = pdf.splitTextToSize(normalizeTurkish(row.notes || ''), colWidths[3] - 4);
+    pdf.text(notesText[0] || '', colX + 2, curY + 6);
 
     curY += rowHeight;
   });

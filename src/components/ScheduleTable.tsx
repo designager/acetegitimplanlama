@@ -28,9 +28,10 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({ timeSlots, rows, o
       <table className="schedule-table">
         <thead>
           <tr>
-            <th style={{ width: '170px', whiteSpace: 'nowrap' }}>Saat</th>
+            <th style={{ width: '130px', whiteSpace: 'nowrap' }}>Saat</th>
+            <th style={{ width: '20%' }}>Görevli Kişi</th>
             <th>Görev / Eylem</th>
-            <th style={{ width: '35%' }}>Notlar</th>
+            <th style={{ width: '30%' }}>Notlar</th>
           </tr>
         </thead>
         <tbody>
@@ -43,6 +44,15 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({ timeSlots, rows, o
             >
               <td className="schedule-time-cell">
                 {row.timeSlot}
+              </td>
+              <td className="schedule-table-cell">
+                <input
+                  type="text"
+                  value={row.assignee || ''}
+                  onChange={(e) => updateRow(row.id, 'assignee', e.target.value)}
+                  className="schedule-input"
+                  placeholder="Kişi adı..."
+                />
               </td>
               <td className="schedule-table-cell">
                 <input

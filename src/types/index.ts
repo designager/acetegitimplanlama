@@ -17,6 +17,7 @@ export type TargetType = "student_count" | "registration" | "trial_lesson" | "ot
 export interface ScheduleRow {
   id: string;
   timeSlot: string;
+  assignee?: string;
   action: string;
   notes?: string;
   colorTag?: string;
