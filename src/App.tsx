@@ -131,7 +131,7 @@ function AppContent() {
         {/* Logo area */}
         <div className="px-5 pt-7 pb-5 border-b border-white/5 mb-2">
           {globalLogo ? (
-            <img src={globalLogo} alt="Şirket Logosu" className="h-11 object-contain" />
+            <img src={globalLogo} alt="Şirket Logosu" className="h-16 w-auto object-contain" />
           ) : (
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0 shadow-[0_4px_12px_rgba(183,110,121,0.4)]" style={{ background: 'linear-gradient(135deg, #B76E79 0%, #D4959E 100%)' }}>
@@ -171,7 +171,7 @@ function AppContent() {
       {/* Mobile Top Bar */}
       <div className="md:hidden flex items-center justify-between px-4 py-3 border-b border-white/5 shrink-0" style={{ background: 'linear-gradient(90deg, #0A1128 0%, #02040A 100%)' }}>
         {globalLogo ? (
-          <img src={globalLogo} alt="Şirket Logosu" className="h-8 object-contain" />
+          <img src={globalLogo} alt="Şirket Logosu" className="h-10 w-auto object-contain" />
         ) : (
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #B76E79 0%, #D4959E 100%)' }}>
