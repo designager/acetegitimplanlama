@@ -4,15 +4,17 @@ export const processLogoForDarkTheme = (base64: string): Promise<string> => {
     img.onload = () => {
       try {
         const canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
+        // Handle SVGs without intrinsic dimensions
+        canvas.width = img.width || 800;
+        canvas.height = img.height || 600;
+        
         const ctx = canvas.getContext('2d', { willReadFrequently: true });
         if (!ctx) {
           resolve(base64);
           return;
         }
         
-        ctx.drawImage(img, 0, 0);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const data = imageData.data;
         
@@ -22,18 +24,26 @@ export const processLogoForDarkTheme = (base64: string): Promise<string> => {
           const b = data[i+2];
           const a = data[i+3];
           
-          if (a === 0) continue;
+          // Çok düşük görünürlüğü olan (neredeyse transparan) pikselleri direkt sil
+          if (a < 5) {
+            data[i+3] = 0;
+            continue;
+          }
 
-          // Eğer piksel çok açık renkliyse (beyaz/açık gri arka plan gibi), tamamen saydam yap
-          if (r > 200 && g > 200 && b > 200) {
+          // Açık renkli pikselleri sil (beyaz arka planları yok et)
+          if (r > 180 && g > 180 && b > 180) {
             data[i+3] = 0; 
           } 
-          // Geri kalan her şeyi (siyah, gri, anti-alias kenarlar, renkli kısımlar) tam BEYAZ yap!
+          // Kalan tüm pikselleri (siyah, renkli) TAM BEYAZ yap (siluet)
           else {
-            data[i] = 255;   // R
-            data[i+1] = 255; // G
-            data[i+2] = 255; // B
-            // a (alpha) değerine dokunmuyoruz ki yumuşak kenarlar (anti-aliasing) korunsun
+            data[i] = 255;
+            data[i+1] = 255;
+            data[i+2] = 255;
+            // Orijinal alpha korunuyor (a = a), sadece renk beyaza dönüyor.
+            // Ancak aşırı saydamlık varsa biraz daha görünür yapabiliriz.
+            if (a > 0 && a < 255) {
+              data[i+3] = Math.min(255, a + 50); // anti-aliasing'i biraz güçlendir
+            }
           }
         }
         
@@ -44,7 +54,10 @@ export const processLogoForDarkTheme = (base64: string): Promise<string> => {
         resolve(base64);
       }
     };
-    img.onerror = () => resolve(base64);
+    img.onerror = (err) => {
+      console.error("Logo yükleme hatası:", err);
+      resolve(base64);
+    };
     img.src = base64;
   });
 };
