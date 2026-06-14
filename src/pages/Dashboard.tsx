@@ -18,7 +18,7 @@ export default function Dashboard() {
   return (
     <div className="p-4 md:p-8 max-w-[1200px] mx-auto">
       <div className="page-header mb-6 md:mb-8">
-        <h1 className="text-2xl md:text-[2rem]">Dashboard</h1>
+        <h1 className="text-2xl md:text-[2rem]">Cihat Acet, Hoşgeldiniz... 👋</h1>
         <p className="text-sm md:text-base">Sistemdeki genel durumunuza buradan ulaşabilirsiniz.</p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
