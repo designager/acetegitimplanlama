@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import type { Institution, Schedule } from '../types';
 
@@ -9,6 +10,12 @@ interface AppState {
   siteTitle: string;
   siteFavicon: string | null;
   isLoading: boolean;
+  
+  session: Session | null;
+  user: User | null;
+
+  checkSession: () => Promise<void>;
+  signOut: () => Promise<void>;
   
   fetchInitialData: () => Promise<void>;
   
@@ -32,6 +39,22 @@ export const useStore = create<AppState>((set) => ({
   siteTitle: 'Kayıt Planı',
   siteFavicon: null,
   isLoading: true,
+  session: null,
+  user: null,
+
+  checkSession: async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    set({ session, user: session?.user || null });
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      set({ session, user: session?.user || null });
+    });
+  },
+
+  signOut: async () => {
+    await supabase.auth.signOut();
+    set({ session: null, user: null, institutions: [], schedules: [] });
+  },
 
   fetchInitialData: async () => {
     set({ isLoading: true });

@@ -1,6 +1,6 @@
 import React, { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { CalendarDays, Building2, LayoutDashboard, Settings } from 'lucide-react';
+import { CalendarDays, Building2, LayoutDashboard, Settings, LogOut } from 'lucide-react';
 import { useStore } from './store/useStore';
 
 // Lazy load pages for code splitting
@@ -8,6 +8,7 @@ const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Institutions = lazy(() => import('./pages/Institutions'));
 const NewSchedule = lazy(() => import('./pages/NewSchedule'));
 const SettingsPage = lazy(() => import('./pages/Settings'));
+const Login = lazy(() => import('./pages/Login'));
 
 const NAV_ITEMS = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
@@ -35,11 +36,17 @@ const NavLink = ({ to, icon: Icon, label }: { to: string; icon: React.ElementTyp
 };
 
 function AppContent() {
-  const { siteTitle, siteFavicon, fetchInitialData, isLoading } = useStore();
+  const { siteTitle, siteFavicon, fetchInitialData, isLoading, session, checkSession, signOut } = useStore();
 
   useEffect(() => {
-    fetchInitialData();
+    checkSession();
   }, []);
+
+  useEffect(() => {
+    if (session) {
+      fetchInitialData();
+    }
+  }, [session]);
 
   useEffect(() => {
     document.title = siteTitle || 'Kayıt Planı';
@@ -54,11 +61,23 @@ function AppContent() {
     }
   }, [siteTitle, siteFavicon]);
 
-  if (isLoading) {
+  if (isLoading && session) {
     return (
       <div className="flex h-screen items-center justify-center bg-[#EDEAE4]">
         <div className="w-12 h-12 border-4 border-[#B76E79]/20 border-t-[#B76E79] rounded-full animate-spin"></div>
       </div>
+    );
+  }
+
+  if (!session) {
+    return (
+      <Suspense fallback={
+        <div className="flex h-screen items-center justify-center bg-[#EDEAE4]">
+          <div className="w-12 h-12 border-4 border-[#B76E79]/20 border-t-[#B76E79] rounded-full animate-spin"></div>
+        </div>
+      }>
+        <Login />
+      </Suspense>
     );
   }
 
@@ -102,8 +121,17 @@ function AppContent() {
         </nav>
 
         {/* Footer */}
-        <div className="hidden md:block px-5 py-4 border-t border-white/5 text-[0.7rem] text-white/25 text-center">
-          © 2026 ACET Yönetim Sistemi
+        <div className="mt-auto border-t border-white/5">
+          <button 
+            onClick={signOut}
+            className="w-full flex items-center gap-2 md:gap-3 px-5 py-4 text-sm font-medium text-white/55 hover:text-white/85 hover:bg-white/5 transition-all text-left"
+          >
+            <LogOut size={18} strokeWidth={1.8} />
+            <span className="whitespace-nowrap">Çıkış Yap</span>
+          </button>
+          <div className="hidden md:block px-5 pb-4 text-[0.7rem] text-white/25 text-center">
+            © 2026 ACET Yönetim Sistemi
+          </div>
         </div>
       </aside>
 
