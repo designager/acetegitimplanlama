@@ -268,6 +268,7 @@ interface DataPDFExportParams {
   globalTarget?: string;
   globalLogo?: string;
   rows: { timeSlot: string; action: string; notes?: string; assignee?: string }[];
+  returnBlob?: boolean;
 }
 
 export const exportScheduleFromData = async ({
@@ -276,6 +277,7 @@ export const exportScheduleFromData = async ({
   globalTarget,
   globalLogo,
   rows,
+  returnBlob = false,
 }: DataPDFExportParams) => {
   const pdf = new jsPDF({
     orientation: 'portrait',
@@ -463,9 +465,13 @@ export const exportScheduleFromData = async ({
 
   const fileName = `kayit-plani-${normalizeTurkish(institutionName).toLowerCase().replace(/\s+/g, '-')}.pdf`;
 
+  const pdfBlob = pdf.output('blob');
+  if (returnBlob) {
+    return pdfBlob;
+  }
+
   // Mobilde doğrudan WhatsApp vb. paylaşım için Web Share API entegrasyonu
   try {
-    const pdfBlob = pdf.output('blob');
     const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
 
     if (navigator.share) {

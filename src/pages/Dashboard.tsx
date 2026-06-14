@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Sparkles, Calendar, Edit, Trash2, Download, Building2, ChevronRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Sparkles, Calendar, Edit, Trash2, Download, Building2, ChevronRight, Archive, Search, X } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { Link } from 'react-router-dom';
 
@@ -7,6 +7,10 @@ export default function Dashboard() {
   const { institutions, schedules, deleteSchedule, globalLogo } = useStore();
   const [activeInstitutionId, setActiveInstitutionId] = useState<string>('all');
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const [isZipping, setIsZipping] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   const getInstitutionName = (id: string) => {
     return institutions.find(i => i.id === id)?.name || 'Bilinmeyen Kurum';
@@ -47,10 +51,83 @@ export default function Dashboard() {
     }
   };
 
-  // Filter schedules by selected institution
-  const filteredSchedules = activeInstitutionId === 'all'
-    ? schedules
-    : schedules.filter(s => s.institutionId === activeInstitutionId);
+  const handleBulkZipDownload = async () => {
+    if (filteredSchedules.length === 0) return;
+    setIsZipping(true);
+
+    try {
+      const JSZip = (await import('jszip')).default;
+      const zip = new JSZip();
+      const { exportScheduleFromData } = await import('../utils/pdfGenerator');
+
+      for (const schedule of filteredSchedules) {
+        const institution = institutions.find(i => i.id === schedule.institutionId);
+        if (!institution) continue;
+
+        const blob = await exportScheduleFromData({
+          institutionName: institution.name,
+          institutionLogo: institution.logoBase64,
+          globalTarget: schedule.globalTarget,
+          globalLogo: globalLogo || undefined,
+          rows: schedule.rows || [],
+          returnBlob: true,
+        });
+
+        if (blob) {
+          const fileName = `kayit-plani-${institution.name.toLowerCase().replace(/\s+/g, '-')}-${schedule.date}.pdf`;
+          zip.file(fileName, blob);
+        }
+      }
+
+      const zipContent = await zip.generateAsync({ type: 'blob' });
+      const zipName = `Kayit-Planlari-${new Date().toISOString().split('T')[0]}.zip`;
+
+      // Mobilde Paylaş veya İndir
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([zipContent], zipName, { type: 'application/zip' })] })) {
+        const file = new File([zipContent], zipName, { type: 'application/zip' });
+        await navigator.share({
+          title: 'Kayıt Planları ZIP',
+          text: 'Seçili kayıt planları paketi',
+          files: [file]
+        });
+      } else {
+        const url = URL.createObjectURL(zipContent);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = zipName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error('ZIP oluşturma hatası:', error);
+      alert('ZIP oluşturulurken bir hata meydana geldi.');
+    } finally {
+      setIsZipping(false);
+    }
+  };
+
+  // Filter schedules by selected institution, search query, and date range
+  const filteredSchedules = schedules.filter(s => {
+    const instMatch = activeInstitutionId === 'all' || s.institutionId === activeInstitutionId;
+    
+    let searchMatch = true;
+    if (searchQuery.trim()) {
+      const instName = getInstitutionName(s.institutionId).toLowerCase();
+      searchMatch = instName.includes(searchQuery.toLowerCase());
+    }
+
+    let dateMatch = true;
+    if (startDate) {
+      dateMatch = dateMatch && s.date >= startDate;
+    }
+    if (endDate) {
+      dateMatch = dateMatch && s.date <= endDate;
+    }
+
+    return instMatch && searchMatch && dateMatch;
+  });
 
   // Get unique institution IDs that have schedules
   const institutionsWithSchedules = institutions.filter(inst =>
@@ -93,14 +170,73 @@ export default function Dashboard() {
       <div className="mt-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
           <h2 className="text-xl font-display font-bold text-[#F2E0E2]">Kayıtlı Planlamalar</h2>
-          <Link
-            to="/schedule/new"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all"
-            style={{ background: 'linear-gradient(135deg, #B76E79 0%, #D4959E 100%)', boxShadow: '0 4px 15px rgba(183,110,121,0.3)' }}
-          >
-            <Calendar size={15} />
-            Yeni Planlama
-          </Link>
+          
+          <div className="flex flex-wrap items-center gap-3">
+            {filteredSchedules.length > 0 && (
+              <button
+                onClick={handleBulkZipDownload}
+                disabled={isZipping}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all disabled:opacity-50"
+                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#F2E0E2' }}
+              >
+                {isZipping ? (
+                  <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <Archive size={15} />
+                )}
+                {isZipping ? 'Paketleniyor...' : 'Toplu İndir (ZIP)'}
+              </button>
+            )}
+            
+            <Link
+              to="/schedule/new"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all"
+              style={{ background: 'linear-gradient(135deg, #B76E79 0%, #D4959E 100%)', boxShadow: '0 4px 15px rgba(183,110,121,0.3)' }}
+            >
+              <Calendar size={15} />
+              Yeni Planlama
+            </Link>
+          </div>
+        </div>
+
+        {/* Filters Bar */}
+        <div className="flex flex-col md:flex-row gap-3 mb-6 p-4 rounded-xl bg-[#0A1128]/50 border border-white/5 backdrop-blur-sm">
+          <div className="relative flex-1">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+            <input
+              type="text"
+              placeholder="Kurum adına göre ara..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#B76E79]/50 transition-colors"
+            />
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#B76E79]/50 transition-colors [color-scheme:dark]"
+            />
+            <span className="text-gray-500">-</span>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#B76E79]/50 transition-colors [color-scheme:dark]"
+            />
+            
+            {(searchQuery || startDate || endDate) && (
+              <button
+                onClick={() => { setSearchQuery(''); setStartDate(''); setEndDate(''); }}
+                className="p-2 text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-colors"
+                title="Filtreleri Temizle"
+              >
+                <X size={16} />
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Institution Tabs */}
