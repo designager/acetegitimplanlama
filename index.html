@@ -4,7 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kayıt Planı</title>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script>
+      try {
+        var storeStr = localStorage.getItem('schedule-store');
+        if (storeStr) {
+          var state = JSON.parse(storeStr).state;
+          if (state && state.siteTitle) {
+            document.title = state.siteTitle;
+          }
+          if (state && state.siteFavicon) {
+            var link = document.createElement('link');
+            link.rel = 'icon';
+            link.href = state.siteFavicon;
+            document.head.appendChild(link);
+            var appleLink = document.createElement('link');
+            appleLink.rel = 'apple-touch-icon';
+            appleLink.href = state.siteFavicon;
+            document.head.appendChild(appleLink);
+          }
+        }
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>
