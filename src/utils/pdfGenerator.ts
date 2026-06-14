@@ -461,5 +461,29 @@ export const exportScheduleFromData = async ({
   pdf.setTextColor(107, 114, 128);
   pdf.text(`Olusturma: ${new Date().toLocaleString('tr-TR')} | Kayit Plani Sistemi`, margin, pageHeight - 6);
 
-  pdf.save(`kayit-plani-${normalizeTurkish(institutionName).toLowerCase().replace(/\s+/g, '-')}.pdf`);
+  const fileName = `kayit-plani-${normalizeTurkish(institutionName).toLowerCase().replace(/\s+/g, '-')}.pdf`;
+
+  // Mobilde doğrudan WhatsApp vb. paylaşım için Web Share API entegrasyonu
+  try {
+    const pdfBlob = pdf.output('blob');
+    const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
+
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        title: 'Kayıt Planı',
+        text: `${institutionName} - Kayıt Planı`,
+        files: [file]
+      });
+    } else {
+      // Paylaşım desteklenmiyorsa (örn. masaüstü) klasik indirme
+      pdf.save(fileName);
+    }
+  } catch (error: any) {
+    // Kullanıcı paylaşımı iptal ederse AbortError fırlatır, hata göstermeye gerek yok
+    if (error.name !== 'AbortError') {
+      console.error('Paylaşım hatası:', error);
+      // Hata durumunda yedeğe dön ve normal indir
+      pdf.save(fileName);
+    }
+  }
 };
